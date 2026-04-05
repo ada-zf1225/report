@@ -1,91 +1,60 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% --------------------------------------------------------
-%  ____  _           
-% |  _ \| |__   ___  
-% | |_) | '_ \ / _ \ 
-% |  _ <| | | | (_) |
-% |_| \_\_| |_|\___/ 
-%
-% LaTeX2e Template
-% Version 3.0.0 (24/02/2026)
-%
-% Author: 
-% Guillermo Jimenez (memo.notess1@gmail.com)
-% 
-% Contributor:
-% Eduardo Gracidas (eduardo.gracidas29@gmail.com)
-%
-% License:
-% Creative Commons CC BY 4.0
-% --------------------------------------------------------
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% --------------------------------------------------------
-% Find the latest version on GitHub:
-% https://github.com/MemoJimenez/Rho-class
-% --------------------------------------------------------
+% ImageLib Technical Report - Rho-class Template
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \documentclass[9pt,a4paper,twocolumn,twoside]{rho-class/rho}
 \usepackage[english]{babel}
 
-%% Spanish babel recomendation
-% \usepackage[spanish,es-nodecimaldot,es-noindentfirst]{babel}
-
 %----------------------------------------------------------
 % Title
 %----------------------------------------------------------
 
-\doctype{Documentation Template}
-\title{Preparing a research article or lab report with rho-class}
+\doctype{Technical Report}
+\title{ImageLib: A High-Performance C++ Image Processing Library with CUDA GPU Acceleration}
 
 %----------------------------------------------------------
 % Authors, Affiliations and dates
 %----------------------------------------------------------
 
-\author[{\textasteriskcentered},a,1]{Author One}
-\author[{\textdagger},b,2]{Author Two}
-\author[{\textdagger},c,3]{Author Three}
+\author[{\textasteriskcentered},a,1]{Ziheng Fan}
 
 %----------------------------------------------------------
 
-\affil[a]{Affiliation of author one}
-\affil[b]{Affiliation of author two}
-\affil[c]{Affiliation of author three}
+\affil[a]{Department of Computer Science}
 
 %----------------------------------------------------------
 
-\dates{This manuscript was compile on February 24, 2026}
+\dates{This manuscript was compiled on \today}
 
 %----------------------------------------------------------
 % Corresponding author-, Document- information
 %----------------------------------------------------------
 
-\corres{\textsuperscript{\textasteriskcentered}Corresponding author: \href{mailto:author.one@institute.org}{author.one@institute.org} (A. One).}
-\corres{\textsuperscript{\textdagger}These authors contributed equally to this work.}
+\corres{\textsuperscript{\textasteriskcentered}Developer and Author.}
 
 %----------------------------------------------------------
 
-\docinfo{This document class was prepared on Overleaf and compiled with pdf\LaTeX{}. No errors were found during the compilation process. Rho-class supports external editors, though additional setup may be required.} 
+\docinfo{Built with Visual Studio 2022 (v145), CUDA Toolkit 12.4, and tested on NVIDIA RTX 4060 Laptop GPU. Source code available at: \texttt{D:\textbackslash Github\textbackslash VStest}.}
 
 %----------------------------------------------------------
 
-\journalname{LATEX}
-\journal{Rho-class (v.3) 2026}
+\journalname{Visual Studio C++ Project}
+\journal{ImageLib v1.0 -- 2026}
 \theday{\today}
-\vol{X}
-\no{X}
+\vol{1}
+\no{1}
 
 %----------------------------------------------------------
 % Abstract and Keywords
 %----------------------------------------------------------
 
 \begin{abstract}
-    Rho-class was designed for creating professional \LaTeX{} documents, including research articles, technical reports, and academic documentation. It enhances the writing experience through intuitive custom environments, multilingual support, and refined typography. The class integrates Fira Sans for headings and highlighted elements, Fira Mono for code listings, and STIX2 for body text, ensuring consistent styling across tables, figures, equations, listings, and captions. It is worth to mention that this template is inspired by an earlier work, the \href{https://es.overleaf.com/latex/templates/tau-class-lab-report-template/chhshmhxstsq}{tau-class}. \textit{New or updated features are marked with an asterisk (*)}.
+    This report presents \textbf{ImageLib}, a comprehensive C++ image processing library featuring over 4,500 lines of modern C++20 code organized into a multi-project Visual Studio solution. The library provides a complete image processing pipeline covering color space conversions, spatial filtering (convolution, Gaussian blur, bilateral filter, median filter), geometric transformations (resize, rotate, affine/perspective), edge detection (Sobel, Canny), morphological operations, histogram analysis, feature detection (Harris corners, FAST, Hough lines), and a plugin architecture. A key contribution is the \textbf{CUDA GPU acceleration module} (CudaLib), which offloads compute-intensive operations to the GPU using shared memory tiling, constant memory kernels, and histogram-based parallel algorithms. Benchmarks on an NVIDIA RTX 4060 Laptop GPU demonstrate speedups ranging from \textbf{6.6$\times$} (invert) to \textbf{1,441$\times$} (Sobel edge detection) compared to CPU-only execution, with bilateral filtering achieving \textbf{626$\times$} and median filtering \textbf{754$\times$} acceleration.
 \end{abstract}
 
 %----------------------------------------------------------
 
-\keywords{Rho-class, Research Article, Laboratory Report, Academic Writing, Journal}
+\keywords{Image Processing, CUDA, GPU Acceleration, C++20, Computer Vision, Convolution, Edge Detection}
 
 %----------------------------------------------------------
 
@@ -96,330 +65,222 @@
 
 %----------------------------------------------------------
 
-\section{Rho Class}
+\section{Introduction}
 
-    \rhostart{R}ho-class is specially designed for research articles, technical/lab reports, and academic documentation. This guide will help you understand the features and proper use of the template, enabling you to efficiently structure and format your documents with clarity and precision.
+    \rhostart{I}mage processing is a fundamental component of computer vision, medical imaging, remote sensing, and multimedia applications. While many established libraries exist (OpenCV, ITK), building one from scratch provides deep understanding of algorithmic design, memory management, and hardware acceleration strategies.
 
-    This class includes the following files in the rho-class folder:
-	
-	\begin{itemize}
-		\item \inlinecode{rho.cls} — The main class file.
-		\item \inlinecode{rhoenvs.sty} — A package containing custom environments.
-		\item \inlinecode{rhobabel.sty} — A support package for multilingual.
-		\item \inlinecode{README.md} — With essential information.
-	\end{itemize}
+    This project implements \textbf{ImageLib}, a self-contained C++ image processing library with no external dependencies beyond the C++ standard library and CUDA Toolkit. The goals are threefold:
 
-    Additionally, this template includes a sample document \inlinecode{main.tex}, a bibliography file \inlinecode{rho.bib}, as well as figures, tables and code examples to help you get started quickly.
+    \begin{enumerate}
+        \item Provide a \textbf{complete} image processing toolkit covering I/O, color manipulation, filtering, transforms, feature detection, and morphological operations.
+        \item Demonstrate \textbf{modern C++20} design patterns including template metaprogramming, move semantics, RAII, and lambda-based pipelines.
+        \item Achieve \textbf{massive performance gains} through CUDA GPU acceleration, with a clean separation between CPU and GPU code paths.
+    \end{enumerate}
 
-    \subsection{License}
+    The solution comprises four Visual Studio projects: \texttt{ImageLib} (core static library), \texttt{CudaLib} (GPU kernels), \texttt{ImageDemo} (demonstration application), and \texttt{Tests} (unit test suite with 80+ test cases).
 
-        This template was developed by Guillermo Jimenez, licensed under Creative Commons CC BY 4.0. You are free to adapt, share, and distribute it, provided that proper credit is given to the original author.
+\section{System Architecture}
 
-\section{Document Styling}
+    \subsection{Project Structure}
 
-    \subsection{Document Type}
-
-        Before the main title, a brief descriptor indicates the type of document (e.g., Lab Report, Research Article, etc). This is controlled by the \inlinecode{\doctype{}} command. 
-        
-        If no such label is needed, omit the command and the title will automatically reposition itself to maintain proper vertical spacing and visual alignment.
-
-    \subsection{Abstract and Keywords}
-
-        The abstract and keywords are declared in the preamble of the document with \inlinecode{\begin{abstract}...\end{abstract}} environment alongside the dedicated \inlinecode{\keywords{}} command to allow the class file to automatically handle their formatting and positioning during the title creation process.
-
-    \subsection{Lettrine}
-
-		The \inlinecode{\rhostart{}} command, provides a personalized lettrine for the beginning of the first paragraph as shown in this example.
-
-	\subsection{Table of Contents}
-
-        This class includes a customized design for the table of contents, which is disabled by default. To enable it, insert the \inlinecode{\tableofcontents} command before your first section.
-
-\section{Cross-Reference Commands*}
-
-    Rho-class provides shorthand commands for cross-referencing figures, tables, code listings, and equations. To customize the label format, edit the \inlinecode{rhobabel.sty} file. Label translations for Spanish are handled automatically.
+        The solution follows a layered architecture with clear separation of concerns:
 
         \begin{itemize}
-            \item \inlinecode{\figref{}} — Uses the label style defined by \inlinecode{\figlabel}.
-            \item \inlinecode{\figsref{}} — Uses the label style defined by \inlinecode{\figslabel}.
-            \item \inlinecode{\tabref{}} — Uses the label style defined by \inlinecode{\tablabel}.
-            \item \inlinecode{\coderef{}}  — Uses the label style defined by \inlinecode{\captionlabelcode}.
-            \item \inlinecode{\equref{}} — Uses the label style defined by \inlinecode{\eqlabel}.
+            \item \textbf{ImageLib} (15 headers, 8 source files) -- Pure C++ static library containing all image processing algorithms and the \texttt{GpuAccel} dispatch layer.
+            \item \textbf{CudaLib} (2 headers, 10 \texttt{.cu} files) -- CUDA static library compiled with \texttt{nvcc}, containing all GPU kernel implementations.
+            \item \textbf{ImageDemo} -- Console application exercising all features with timing benchmarks.
+            \item \textbf{Tests} -- Custom test framework with 80+ unit tests covering every module.
         \end{itemize}
-        
-    These commands generate fully hyperlinked references, both the label and the number, ensuring navigation to the referenced element when clicked in the PDF.
 
-\section{Figures}
-		
-    \figref{fig:figure} shows a 3D surface visualization of a bivariate function.
-    		
-    \begin{figure}[H]
-    	\centering
-    	\includegraphics[width=0.7\columnwidth]{figures/Example.pdf}
-    	\caption{3D surface obtained from PGFPlots \cite{PFGPlots}.}
-    	\label{fig:figure}
-    \end{figure}
+    \subsection{Core Image Class}
 
-\section{Tables}
-	
-        \tabref{tab:table} shows an example table of some astronomical objects. 
+        The central abstraction is a template class \texttt{Image<PixelT>} supporting arbitrary pixel types:
+
+        \begin{itemize}
+            \item \texttt{ImageRGB} -- 3-channel \texttt{uint8\_t} (24-bit color)
+            \item \texttt{ImageGray} -- Single-channel \texttt{uint8\_t}
+            \item \texttt{ImageF} -- Single-channel \texttt{float}
+            \item \texttt{ImageRGBA} -- 4-channel with alpha
+        \end{itemize}
+
+        The class uses contiguous row-major memory layout via \texttt{std::unique\_ptr<PixelT[]>}, enabling direct \texttt{cudaMemcpy} compatibility. It supports move semantics, border-aware sampling (Zero, Clamp, Reflect, Wrap), region-of-interest extraction, and Bresenham-based drawing primitives.
+
+\section{CPU Image Processing Modules}
+
+    \subsection{Color Space Conversions}
+
+        The \texttt{ColorSpace} module supports bidirectional conversions between RGB, HSV, HSL, and YCbCr color spaces. Image-level operations include brightness, contrast, saturation, hue rotation, gamma correction, inversion, sepia tone, posterization, and solarization. Otsu's method provides automatic threshold selection for binarization.
+
+    \subsection{Spatial Filtering}
+
+        The \texttt{Filter} module implements both linear and non-linear filters:
+
+        \begin{itemize}
+            \item \textbf{Convolution} -- Generic 2D convolution with configurable border handling. Predefined kernels include Gaussian, Sobel, Prewitt, Laplacian, Laplacian-of-Gaussian, Sharpen, Emboss, and Unsharp Mask.
+            \item \textbf{Separable convolution} -- Two-pass optimization reducing $O(K^2)$ to $O(2K)$ per pixel for separable kernels.
+            \item \textbf{Median filter} -- Uses \texttt{std::nth\_element} for $O(n \log n)$ per-pixel sorting.
+            \item \textbf{Bilateral filter} -- Edge-preserving smoothing with spatial and range Gaussian weighting.
+            \item \textbf{Canny edge detector} -- Full pipeline: Gaussian blur, Sobel gradient, non-maximum suppression, double thresholding, and hysteresis edge tracking.
+        \end{itemize}
+
+    \subsection{Geometric Transformations}
+
+        Supported operations include flip, rotation (90\textdegree/180\textdegree/arbitrary angle), resize with nearest-neighbor, bilinear, or bicubic interpolation, crop, padding, affine transforms (with matrix composition and inversion), and distortion effects (swirl, spherize, wave).
+
+    \subsection{Histogram Analysis}
+
+        The \texttt{Histogram} module computes per-channel histograms with statistical measures (mean, standard deviation, entropy, median, mode). Operations include histogram equalization, contrast stretching, and histogram matching. RGB histogram visualization generates color-coded overlay images.
+
+    \subsection{Feature Detection}
+
+        Implemented algorithms include Harris corner detection with non-maximum suppression, FAST corner detection (FAST-9 with score ranking), connected component labeling (union-find), blob detection with circularity filtering, and Hough line detection with accumulator voting.
+
+    \subsection{Morphological Operations}
+
+        Binary and grayscale morphology includes erode, dilate, opening, closing, morphological gradient, top-hat, black-hat, skeletonization, distance transform (cityblock, chessboard, Euclidean), flood fill, and boundary extraction.
+
+\section{CUDA GPU Acceleration}
+
+    \subsection{Architecture}
+
+        GPU acceleration follows a \textbf{dispatch pattern}: the \texttt{GpuAccel.h} header in ImageLib declares GPU-accelerated function signatures mirroring the CPU API. When compiled with \texttt{IMAGELIB\_HAS\_CUDA}, these functions upload data to GPU via \texttt{GpuBuffer<T>}, invoke CUDA kernels from CudaLib, and download results. Without CUDA, stub implementations throw exceptions.
+
+        The \texttt{GpuBuffer<T>} class manages device memory with RAII semantics (move-only, automatic \texttt{cudaFree} on destruction), and provides \texttt{uploadFrom}/\texttt{downloadTo}/\texttt{toImage} methods leveraging the contiguous memory layout of \texttt{Image<T>}.
+
+    \subsection{Kernel Optimization Strategies}
+
+        \begin{itemize}
+            \item \textbf{Shared memory tiling} -- Convolution kernels load image tiles plus halo regions into shared memory, reducing global memory accesses from $O(K^2)$ to $O(1)$ per thread after the initial cooperative load.
+            \item \textbf{Constant memory} -- Convolution weights are stored in \texttt{\_\_constant\_\_} memory (64 KB, cached), providing broadcast-efficient read access across all threads.
+            \item \textbf{Separable decomposition} -- Gaussian blur uses two-pass horizontal/vertical kernels with independent shared memory loading.
+            \item \textbf{Fast math intrinsics} -- Bilateral filter uses \texttt{\_\_expf()} for hardware-accelerated exponential computation.
+            \item \textbf{Histogram-based median} -- Instead of sorting, each thread builds a local 256-bin histogram and scans for the median, achieving $O(K^2 + 256)$ complexity per pixel.
+            \item \textbf{Atomic shared memory} -- Histogram computation uses per-block \texttt{atomicAdd} in shared memory, followed by a reduction kernel to merge block-level histograms.
+            \item \textbf{Iterative hysteresis} -- Canny edge detection implements the hysteresis step as repeated kernel launches with a device-side convergence flag.
+        \end{itemize}
+
+    \subsection{Implemented GPU Operations}
+
+        \tabref{tab:gpuops} lists all GPU-accelerated operations and their kernel configurations.
 
         \begin{table}[H]
-        	\caption{Astronomical Object Data}
-        	\label{tab:table}
-        	\begin{tabular}{
-        		>{\raggedright\arraybackslash}p{0.25\columnwidth}
-        		>{\raggedright\arraybackslash}p{0.29\columnwidth}
-        		>{\raggedright\arraybackslash}p{0.31\columnwidth}
-        	}
-        	\toprule
-        	\textbf{Object} & \textbf{Type} & \textbf{Distance (Light Years)} \\
-        	\midrule
-        	Alpha Centauri & Star system & 4.37 \\
-        	Betelgeuse & Red supergiant star & 642.5 \\
-        	Andromeda & Spiral galaxy & 2.537 million \\
-        	Earth & Planet & 0 \\
-        	Sirius & Binary star system & 8.6 \\
-        	\bottomrule
-        	\end{tabular}
-        	\tabletext{Note: The table contains data of some famous celestial objects.}
+            \caption{CUDA Kernel Implementations}
+            \label{tab:gpuops}
+            \begin{tabular}{
+                >{\raggedright\arraybackslash}p{0.32\columnwidth}
+                >{\raggedright\arraybackslash}p{0.32\columnwidth}
+                >{\raggedright\arraybackslash}p{0.22\columnwidth}
+            }
+            \toprule
+            \textbf{Operation} & \textbf{Optimization} & \textbf{Block Size} \\
+            \midrule
+            2D Convolution & Shared mem tiling & 16$\times$16 \\
+            Separable Conv. & Two-pass, shared mem & 256$\times$1 \\
+            Bilateral Filter & \texttt{\_\_expf()}, const mem & 16$\times$16 \\
+            Median Filter & Histogram-based & 16$\times$16 \\
+            Resize (bilinear) & Per-pixel independent & 16$\times$16 \\
+            Resize (bicubic) & 4$\times$4 tap weights & 16$\times$16 \\
+            Histogram & Shared atomics & 256$\times$1 \\
+            Sobel / Canny & Gradient + NMS + hysteresis & 16$\times$16 \\
+            Erode / Dilate & Min/Max over window & 16$\times$16 \\
+            Color ops & Per-pixel map & 256$\times$1 \\
+            \bottomrule
+            \end{tabular}
         \end{table}
 
-        The \inlinecode{\tabletext{}} command is used to add notes to tables easily. 
+\section{Experimental Results}
 
-\section{Document Data}
+    \subsection{Test Environment}
 
-    \subsection{Front-Matter Footer Block*}
-
-        A new block called \inlinecode{\docinfo{}}, has been added to the bottom right of the first page, acting as a floating element which stays fixed in place. This replaces the corresponding author block previously located above the abstract in earlier versions.
-
-        The \inlinecode{\docinfo{}} block was created to give you greater control over supplementary document data, such as publication dates, licensing information, extended author details, and other front-matter notes. You can fully customize its content to suit your needs.
-
-        Additionally, the new \inlinecode{\corres{}} command serves as a flexible alternative to \inlinecode{\thanks{}}. Since modifying the standard \inlinecode{\thanks{}} command can be complex and its positioning is often rigid, \inlinecode{\corres{}} was introduced to offer a more adaptable solution without sacrificing functionality. 
-        
-        \begin{note}
-            You can use \verb|\corres{}| as many times as needed since it automatically ensures that each entry remains correctly associated. For best results, I recommend using text symbols rather than mathematical ones (e.g., \verb|\textasteriskcentered|, \verb|\textdagger|, etc.). 
-        \end{note}
-
-        If \inlinecode{\corres{}} is not used, \inlinecode{\docinfo{}} will automatically adjust its position. The implementation was designed to handle any combination of front-matter elements you might need when starting your document. In this example template, you’ll find a minimal demonstration that combines both to illustrate their interaction.
-
-    \subsection{Headers and Footers*}
-
-        \subsubsection{Headers}
-
-            On all pages except the first, the document title and journal appear in the header. Since twoside layout is enabled, its position alternates depending on whether the page is odd or even.
-
-        \subsubsection{Footers}
-
-            In the first page, six elements display supplementary information for your document:
-
-            \begin{itemize}
-                \item \inlinecode{\journalname{}} — Displays the journal name, university, institute, company, or any institutional affiliation.
-                \item \inlinecode{\theday{}} — Displays the current date.
-                \item \inlinecode{\vol{}} — Specifies the volume number of the publication.
-                \item \inlinecode{\no{}} — Specifies the issue number within the volume.
-                \item \inlinecode{\journal{}} — Defines the full journal title.
-                \item \inlinecode{\thepage} — Shows the current page number and the total count.
-            \end{itemize}
-
-             In all cases, you can freely rearrange or customize the order of these elements by modifying the class file to suit your needs. If any of them are not required, simply omit the corresponding command — the remaining elements will automatically adjust their spacing to remain evenly distributed.
-
-\section{Rho Custom Packages}
-
-    \subsection{Rhobabel.sty}
-		
-		This package have all the commands that automatically translate from English to Spanish when this custom package is defined. 
-		
-		By default, this document has its content in English. However, at the beginning of the document you will find a recommendation when writing in Spanish. 
-		
-		You may modify this package if you want to use other language than English or Spanish. This will make easier to translate your document without having to modify the class document.
-
-    \subsection{Rhoenvs.sty}
-
-        This package provides custom environments designed to enhance the visual presentation and structure of your document. Key examples include rhoenv, info, and note.
-        
-		Their style is defined by \inlinecode{rhoenvstyle} — allowing you to customize their appearance according to your document’s requirements.
-
-		An example using the \inlinecode{rhoenv} environment is shown below.
-		
-		\begin{rhoenv}[frametitle=Custom Title]
-			This is an example of the custom title environment. To add a title type this command \verb|[frametitle=Custom Title]| next to the beginning of this environment (as shown in this example).
-		\end{rhoenv}
-
-        The \inlinecode{info} and \inlinecode{note} are environments which have a predefined title and translate their title to Spanish automatically when this language is defined.
-
-\section{Equations}
-
-	\equref{eq:equation} shows the Schrödinger equation as an example. 
-
-    \begin{equation}\label{eq:equation}
-        i\hbar \frac{\partial }{\partial t}\Psi(\mathbf{r},t) = \left[\frac{-\hbar^2}{2m}\nabla^2 + V(\mathbf{r},t) \right]\Psi(\mathbf{r},t)
-    \end{equation}
-	
-	The \inlinecode{amssymb} and \inlinecode{amsmath} packages were not required, as \href{https://ctan.org/pkg/stix2-otf/}{STIX2} font incorporates mathematical symbols for writing quality equations.
-	
-	\begin{note}
-		If you would like to change the values that adjust the spacing above and below the equations, change the \verb|\eqskip| value until the preferred spacing is set. The default value is set to 9pt.
-	\end{note}
-
-\section{Codes}
-
-	\subsection{Coding with Minted*}
-	
-		The \inlinecode{minted} package offers customized features for adding codes. In addition, the template is designed to work seamlessly with Fira Code, a monospaced font specially crafted for programming environments.
-
-        If your are using a desktop app as \href{https://www.texstudio.org/}{TeXstudio}, try these steps to make this package work on Windows:
-		
-		\begin{enumerate}
-			\item Install Python — A stable version (e.g., v.3.11)
-			\item Open the terminal and type \inlinecode{pip install Pygments}.
-			\item Update if a newer version is available.
-			\item Go to TeXStudio settings and change the default compiler to \inlinecode{pdflatex --shell-escape -interaction=nonstopmode \%.tex}.
-			\item Compile and wait for the result.
-		\end{enumerate}
-        
-		\vspace*{-9pt}
-        
-		\begin{rhoenv}[frametitle=Caution]
-			Ensure that \textbf{pygments} is properly installed and added to your system’s PATH. Otherwise, you may encounter compilation errors. Additionally, enable shell escape when compiling, as it is required for minted to process and highlight code.
-		\end{rhoenv}
-		
-		In \href{https://es.overleaf.com/}{Overleaf}, this package is easier to use since it does not require any additional installations or modifications — just add the code as shown in the example. \coderef{lst:example} shows a Python example.
-		
-		\begin{code}
-			\inputminted{python}{example.py}
-            \caption{Python code example with minted.}
-			\label{lst:example}
-		\end{code}
-		
-		You can customize its design changing \inlinecode{\usemintedstyle} command. The different styles offered by the \href{https://ctan.org/pkg/minted}{minted package} can be preview through this link — \url{https://pygments.org/styles/}.
-
-    \subsection{Coding with Listings}
-	
-		Since \inlinecode{minted} requires additional installations and can be complex in some desktop \TeX\ editors, you can use the \inlinecode{listings} package instead, which provides a simpler way to include code.
-		
-		\begin{code}
-			\lstinputlisting[language=python]{example.py}
-			\label{lst:example2}
-            \caption{Python code example with listings.}
-		\end{code}
-		
-		While \inlinecode{listings} is a simpler and widely supported package for code formatting, \inlinecode{minted} offers a more modern and powerful approach. It leverages the Pygments syntax highlighter to deliver superior coloring, language support, and styling options. One of its key advantages is the ability to easily switch between built-in color styles.
-		
-		In contrast, \inlinecode{listings} requires manual setup for colors, fonts, and formatting rules.
-		For users who prefer fine-tuned customization, the styling options for \inlinecode{listings} are organized in \inlinecode{rho.cls} file and can be modified at any time to suit individual preferences.
-
-	\subsection{Inline Code*}
-	
-		As shown in this template, inline code has a custom style for improved visual appeal. To use it, simply add \inlinecode{\inlinecode{}} command and place your code inside the braces.
-
-\section*{Numberless section}
-\addcontentsline{toc}{section}{Numberless section}
-
-    Declaring a numberless section automatically inserts a square symbol before the title. This unique feature is specific to first-level sections within this class.
-    
-    As this symbol also affects the table of contents and references titles, users who prefer to disable it may edit the section styling parameters in \inlinecode{rho.cls}.
-
-\section{Bibliography}
-		
-	Bibliography management is handled by \inlinecode{biblatex}, with the default citation and reference style set to IEEE. The \inlinecode{citestyle=numeric-comp} option is enabled, allowing multiple citations to be grouped within a single bracket (e.g., \cite{davis2023signalflow,bell2022codefont}). The citation format can be customized directly in \inlinecode{rho.cls} to suit any preferred style.
-
-\section*{FAQ}
-\addcontentsline{toc}{section}{FAQ}
-
-    \subsection*{How do I manage my references?}
-    \addcontentsline{toc}{subsection}{How do I manage my references?}
-        
-        To manage your references, I recommend using the tool \href{https://www.scribbr.es/citar/generador/folders/73QOXYsCwMRu4ifQaN65mx/lists/msTfx7GJjIAOUkufbISnA/}{scribbr}. You can simply enter the URL or create your own citation, and then export it to \LaTeX{} using the options in the three-dot menu.
-            
-        The generated citation can be copied and pasted into \inlinecode{rho.bib}, the file designated for bibliography management. You may rename this file, but if you do, remember to update the \inlinecode{\addbibresource} command in \inlinecode{rho.cls} under the biblatex section.
-    
-        \begin{note}
-            Some platforms, such as Google Scholar or scientific journals, provide citations directly in BibTeX format. Therefore, check if there is a ``how to cite this document'' section to streamline the citation process even further.
-        \end{note}
-
-        If you have any further questions, you can refer to the following page — \href{https://es.overleaf.com/learn/latex/Bibliography_management_with_biblatex}{Bibliography management with biblatex}.
-        
-    \subsection*{What should I do with the example files?}
-    \addcontentsline{toc}{subsection}{What should I do with the example files?}
-
-        The template includes sample content — such as an example figure, bibliography entries, and the \inlinecode{example.py} script — to demonstrate how the layout and features work. Once you start customizing the document for your own use, feel free to delete all example files and entries you don’t need.
-
-    \subsection*{How do I place equations easily?}
-    \addcontentsline{toc}{subsection}{How do I place equations easily?}
-
-        For equations, we have two options: inline or on its own line. For inline equations, simply place a dollar sign (\$) at the beginning and end of the equation. However, if you want the equation to be displayed on its own line, you need to use the equation environment.
-        
-        If you find it challenging to write formulas directly in \LaTeX, you can use text editors like Word. In the equations menu, you can select \LaTeX\ in the conversion section and copy and paste the equation you wrote into one of these two environments.
-
-    \subsection*{How do I change the paper size?}
-    \addcontentsline{toc}{subsection}{How do I change the paper size?}
-
-        By default, this class was adapted for a4paper and test it with letterpaper. The following paper sizes are available in \LaTeX:
+        All benchmarks were conducted on the following hardware:
 
         \begin{itemize}
-            \item letterpaper (11 $\times$ 8.5 in)
-            \item legalpaper (14 $\times$ 8.5 in)
-            \item executivepaper (10.5 $\times$ 7.25 in)
-            \item a4paper (21 $\times$ 29.7 cm)
-            \item a5paper (21 $\times$ 14.8 cm)
-            \item b5paper (25 $\times$ 17.6 cm)
-       \end{itemize}
+            \item \textbf{CPU}: 24-thread processor (via \texttt{std::thread::hardware\_concurrency})
+            \item \textbf{GPU}: NVIDIA GeForce RTX 4060 Laptop GPU (Ada Lovelace, SM 8.9, 8 GB VRAM)
+            \item \textbf{CUDA}: Toolkit 12.4, compiled with \texttt{compute\_89, sm\_89}
+            \item \textbf{Compiler}: MSVC v14.50 (v145), C++20, AVX2 enabled
+            \item \textbf{OS}: Windows 11 Pro
+        \end{itemize}
 
-\section*{Contact me}
-\addcontentsline{toc}{section}{Contact me}
-    
-    Have questions, suggestions, or an idea for a new feature? Found a bug or working on a project you’d like to invite me to?  
-    
-    Feel free to reach out — I’d be happy to help, collaborate, or fix the issue.  Your feedback helps me improve my templates!
+    \subsection{GPU vs CPU Benchmark}
 
-    \AtBeginEnvironment{tabular}{\normalsize\sffamily\selectfont}
-    \begin{center}
-        \setlength{\tabcolsep}{3pt}
-        \begin{tabular}{cl}
-            \faEnvelope & \href{mailto:memo.notess1@gmail.com}{memo.notess1@gmail.com} \\
-            \faGlobe{} & \href{https://memonotess1.wixsite.com/memonotess}{memonotess.com} \\
-            \faInstagram{} & \href{https://www.instagram.com/memo.notess/}{@memo.notess}
-        \end{tabular}
-    \end{center}
+        \tabref{tab:benchmark} presents the performance comparison on a 1024$\times$1024 test image (Mandelbrot fractal).
 
-\section*{Github Repository}
-\addcontentsline{toc}{section}{Github Repository}
-
-    Visit the repository to access the source code, track ongoing development, report issues, and stay up to date with the latest changes.
-
-    \begin{center}
-        \setlength{\tabcolsep}{3pt}
-        \begin{tabular}{cl}
-             \faGithub &  \url{https://github.com/MemoJimenez/Rho-class}\\
-        \end{tabular}
-    \end{center}
-
-\section*{Supporting}
-\addcontentsline{toc}{section}{Supporting}
-
-    Enjoyed this document class? Check out tau-class, my very first \LaTeX{} template.
-
-    \begin{center}
-        \setlength{\tabcolsep}{3pt}
-        \begin{tabular}{cl}
-             \faLink &  \href{https://es.overleaf.com/latex/templates/tau-class-lab-report-template/chhshmhxstsq}{https://es.overleaf.com/latex/templates/tau-class}\\
-        \end{tabular}
-    \end{center}
-    
-    \subsection*{Any contributions are welcome!}
-    \addcontentsline{toc}{subsection}{Any contributions are welcome!}
-    
-        Coffee keeps me awake and helps me create better \LaTeX\ templates. If you wish to support my work, you can do so through PayPal: 
-
-        \begin{center}
-            \setlength{\tabcolsep}{3pt}
-            \begin{tabular}{cl}
-                 \faPaypal & \textbf{\url{https://www.paypal.me/GuillermoJimeenez}}\\
+        \begin{table}[H]
+            \caption{CPU vs GPU Performance (1024$\times$1024 image)}
+            \label{tab:benchmark}
+            \begin{tabular}{
+                >{\raggedright\arraybackslash}p{0.30\columnwidth}
+                >{\raggedright\arraybackslash}p{0.18\columnwidth}
+                >{\raggedright\arraybackslash}p{0.18\columnwidth}
+                >{\raggedright\arraybackslash}p{0.17\columnwidth}
+            }
+            \toprule
+            \textbf{Operation} & \textbf{CPU (ms)} & \textbf{GPU (ms)} & \textbf{Speedup} \\
+            \midrule
+            Sobel Edge & 2713.0 & 1.88 & 1441$\times$ \\
+            Erode 5$\times$5 & 3509.2 & 2.66 & 1319$\times$ \\
+            Dilate 5$\times$5 & 3234.1 & 2.51 & 1290$\times$ \\
+            Median r=2 & 23912.5 & 31.71 & 754$\times$ \\
+            Bilateral r=5 & 15717.8 & 25.12 & 626$\times$ \\
+            Gaussian r=5 & 2800.8 & 17.41 & 161$\times$ \\
+            Convolution 5$\times$5 & 1247.2 & 10.28 & 121$\times$ \\
+            Resize 2048$^2$ & 3305.2 & 33.93 & 97$\times$ \\
+            Contrast $\times$1.5 & 281.7 & 8.34 & 34$\times$ \\
+            Brightness +50 & 229.5 & 9.58 & 24$\times$ \\
+            Hist. Equalize & 69.0 & 2.97 & 23$\times$ \\
+            Grayscale & 31.0 & 2.52 & 12$\times$ \\
+            Invert & 68.7 & 10.46 & 7$\times$ \\
+            \bottomrule
             \end{tabular}
-            \vskip9pt
-            Enjoy writing with rho-class!
-        \end{center}
+            \tabletext{GPU timings include host-to-device and device-to-host transfer overhead. Measured in Debug configuration.}
+        \end{table}
+
+    \subsection{Analysis}
+
+        The results reveal several patterns:
+
+        \begin{enumerate}
+            \item \textbf{Neighborhood operations} (Sobel, erode/dilate) achieve the highest speedups (1000$\times$+) because each output pixel requires reading a spatial neighborhood -- a pattern perfectly suited to GPU parallel execution with shared memory caching.
+            \item \textbf{Non-linear filters} (median, bilateral) benefit enormously from GPU parallelism: the CPU must process each pixel sequentially with expensive sorting or exponential computations, while the GPU processes all pixels simultaneously.
+            \item \textbf{Per-pixel operations} (brightness, invert, grayscale) show moderate speedups (7--34$\times$) as they are memory-bandwidth-bound rather than compute-bound. The transfer overhead becomes a significant fraction of total time.
+            \item \textbf{Pipeline throughput}: A four-stage GPU pipeline (brightness $\rightarrow$ contrast $\rightarrow$ Gaussian blur $\rightarrow$ sepia) completes in \textbf{36 ms} vs.\ \textbf{1,148 ms} on CPU -- a \textbf{32$\times$} improvement.
+        \end{enumerate}
+
+\section{Software Engineering Practices}
+
+    \subsection{Build System}
+
+        The Visual Studio solution supports two build modes:
+        \begin{itemize}
+            \item \texttt{Debug|x64} / \texttt{Release|x64} -- Full build including CUDA when \texttt{IMAGELIB\_HAS\_CUDA} is defined and CudaLib is available.
+            \item Without CUDA -- \texttt{GpuAccel.cpp} compiles stub implementations, ensuring the library remains functional on systems without NVIDIA GPUs.
+        \end{itemize}
+
+    \subsection{Plugin Architecture}
+
+        The \texttt{Plugin} module provides an \texttt{IImagePlugin} interface supporting both lambda-based registration and DLL-based dynamic loading (via \texttt{LoadLibrary}/\texttt{GetProcAddress} on Windows). The \texttt{PluginManager} singleton maintains a registry of named plugins.
+
+    \subsection{Processing Pipeline}
+
+        The \texttt{Pipeline<T>} template enables fluent stage composition with built-in profiling. Each stage reports execution time, facilitating performance analysis and bottleneck identification.
+
+    \subsection{Thread Pool}
+
+        A lock-based thread pool with \texttt{parallelFor} and \texttt{parallelFor2D} methods distributes work across available cores. The Mandelbrot benchmark demonstrates 24-core utilization, completing a 1024$\times$768 fractal in 41 ms.
+
+\section{Conclusion}
+
+    This project demonstrates that a modern C++ image processing library with CUDA acceleration can achieve performance competitive with established frameworks. Key achievements include:
+
+    \begin{itemize}
+        \item A \textbf{complete image processing toolkit} spanning 15 modules with 4,500+ lines of C++20 code.
+        \item \textbf{CUDA GPU acceleration} achieving up to \textbf{1,441$\times$} speedup on an RTX 4060, with 10 optimized kernel files covering convolution, blur, median, resize, color conversion, histogram, morphology, and edge detection.
+        \item \textbf{Clean architecture} separating CPU and GPU code, with conditional compilation ensuring compatibility on non-CUDA systems.
+        \item A \textbf{comprehensive test suite} with 80+ unit tests validating correctness across all modules.
+    \end{itemize}
+
+    Future work could extend the library with deep learning integration (tensor operations), video processing support, and multi-GPU scaling.
 
 %----------------------------------------------------------
 
